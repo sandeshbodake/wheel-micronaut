@@ -1,0 +1,23 @@
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
+
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <timestampPattern>[ISO_OFFSET_DATE_TIME]</timestampPattern>
+            <fieldNames>
+                <thread>thread</thread>
+                <logger>logger</logger>
+                <version>[ignore]</version>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
+        </encoder>
+    </appender>
+
+    <logger name="io.micronaut.context" level="INFO"/>
+    <logger name="com.zaxxer.hikari" level="INFO"/>
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

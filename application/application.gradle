@@ -1,0 +1,84 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer
+
+plugins {
+    id 'application'
+    id 'com.github.johnrengelman.shadow'
+}
+
+group 'sample.service'
+version '0.1'
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    setArchivesBaseName("sample-service")
+}
+
+configurations {
+    devOnly
+}
+
+dependencies {
+    devOnly platform(libs.micronaut.bom)
+
+    implementation project(':api')
+
+    implementation platform(libs.micronaut.bom)
+    kapt platform(libs.micronaut.bom)
+
+    implementation libs.micronaut.inject.inject
+    kapt libs.micronaut.inject.java
+}
+
+// Should remove this when we are able to run via sam cli
+mainClassName = "scalereal.api.ApiApplication"
+
+
+sourceSets {
+    devOnly {
+        kotlin.srcDirs = ['dev-src']
+        resources.srcDirs = ['dev-res']
+        java.srcDirs = [] // disable java devOnly dirs
+        compileClasspath += sourceSets.main.runtimeClasspath
+    }
+}
+
+shadowJar {
+    mergeServiceFiles()
+    transform(Log4j2PluginsCacheFileTransformer)
+}
+
+task buildZip(type: Zip) {
+    from sourceSets.main.output
+    into('lib') {
+        from configurations.compileClasspath
+        from configurations.runtimeClasspath
+    }
+}
+
+shadowJar.dependsOn buildZip
+
+run.dependsOn(processDevOnlyResources)
+
+run {
+    classpath += configurations.devOnly                         // Adds devOnly libraries
+    classpath += sourceSets.devOnly.runtimeClasspath            // Adds devOnly sources and resources
+    classpath += fileTree("build/classes/kotlin/devOnly")
+    // TODO: Fix this properly without having to specify path by hand
+
+    // to activate: gradle application:run -PprintClasspath
+    if (project.hasProperty("printClasspath")) {
+        println(classpath.elements.get().join("\n"))
+    }
+
+    jvmArgs('-noverify',
+            '-XX:TieredStopAtLevel=1',
+            '-Dcom.sun.management.jmxremote',
+            '-Dmicronaut.environments=dev')
+}
+
+// heroku deployment
+task stage(dependsOn: ['build', 'clean'])
+build.mustRunAfter clean

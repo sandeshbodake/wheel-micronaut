@@ -1,0 +1,58 @@
+micronaut:
+  application:
+    name: sample-service
+  function:
+    name: sample-service
+  http:
+    client:
+      read-timeout: 30s
+---
+#tag::security[]
+micronaut:
+  security:
+    intercept-url-map:
+      - pattern: /**/**/**
+        access:
+          - isAuthenticated()
+    authentication: bearer # <1>
+    token:
+      jwt:
+        signatures:
+          secret:
+            generator:
+              secret: ${JWT_GENERATOR_SIGNATURE_SECRET}
+---
+#tag::refresh[]
+micronaut:
+  security:
+    token:
+      jwt:
+        generator:
+          refresh-token:
+            secret: ${JWT_GENERATOR_SIGNATURE_SECRET}
+---
+micronaut:
+  io:
+    watch:
+      enabled: true
+      paths: src/,res/,../connector/db/src,../core/src
+      restart: true
+  router:
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /open-api-specifications/**
+---
+hikari-configuration:
+  maximum-pool-size: ${MAXIMUM_POOL_SIZE:1}
+  leak-detection-threshold: 20000
+---
+datasource:
+  url: ${JDBC_DATABASE_URL}
+  username: ${JDBC_DATABASE_USERNAME}
+  password: ${JDBC_DATABASE_PASSWORD}
+  driverClassName: org.postgresql.Driver
+---
+graphql:
+  graphiql:
+    enabled: true

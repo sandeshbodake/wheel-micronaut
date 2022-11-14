@@ -1,0 +1,136 @@
+buildscript {
+    apply from: 'dependencies.gradle'
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath libs.ktlint.gradle
+    }
+}
+
+plugins {
+    id "com.github.johnrengelman.shadow" version "$johnrengelmanShadowVersion"
+    id "org.jetbrains.kotlin.jvm" version "$kotlinVersion"
+    id "org.jetbrains.kotlin.kapt" version "$kotlinVersion"
+    id "org.jetbrains.kotlin.plugin.allopen" version "$kotlinVersion"
+    id "jacoco"
+    id "org.jlleitschuh.gradle.ktlint" version "$ktlintVersion"
+}
+
+version "0.1"
+group "scalereal"
+
+repositories {
+    mavenCentral()
+}
+
+apply from: 'dependencies.gradle'
+subprojects {
+    apply(plugin: 'org.jetbrains.kotlin.jvm')
+    apply(plugin: 'org.jetbrains.kotlin.kapt')
+    apply(plugin: 'jacoco')
+    apply(plugin: 'org.jlleitschuh.gradle.ktlint')
+
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://jitpack.io'
+        }
+    }
+
+    configurations {
+        devOnly
+    }
+
+    dependencies {
+        implementation libs.kotlin.stdlib
+        implementation libs.micronaut.graphql
+
+        runtimeOnly libs.logstash.encoder
+        runtimeOnly libs.micronaut.serverNetty
+
+        testImplementation platform(libs.micronaut.bom)
+
+        // Testing
+        testImplementation libs.testing.kotest.micronaut
+        testImplementation libs.testing.mockk
+        testImplementation libs.testing.kotest.runnerJUnit5
+        testImplementation libs.testing.kotest.assertions
+    }
+
+    sourceSets {
+        main.kotlin.srcDirs = ['src']
+        test.kotlin.srcDirs = ['test']
+        main.resources.srcDirs = ['res']
+        test.resources.srcDirs = ['test-res']
+        main.java.srcDirs = [] // disable java source dirs
+        test.java.srcDirs = [] // disable java test dirs
+    }
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events "FAILED", "SKIPPED"
+            exceptionFormat "full"
+            showExceptions true
+            showCauses true
+        }
+    }
+
+    test.classpath += configurations.devOnly
+
+
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = '11'
+            javaParameters = true
+        }
+    }
+
+    compileTestKotlin {
+        kotlinOptions {
+            jvmTarget = '11'
+            javaParameters = true
+        }
+    }
+    kapt { arguments { arg("micronaut.processing.incremental", true) } }
+
+    ktlint {
+        debug = false
+        verbose = false
+        outputToConsole = true
+        outputColorName = "RED"
+        filter {
+            exclude {
+                it.file.path.contains('/gen/')
+            }
+            exclude("**/out/**")
+        }
+    }
+}
+
+task codeCoverageReport(type: JacocoReport) {
+    // Gather execution data from all subprojects
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+    // Add all relevant sourcesets from the subprojects
+    subprojects.each {
+        sourceSets it.sourceSets.main
+    }
+
+    reports {
+        xml.enabled true
+        html.enabled true
+        csv.enabled false
+    }
+}
+
+// always run the tests before generating the report
+codeCoverageReport.dependsOn {
+    subprojects*.test
+}
+
+test.finalizedBy(codeCoverageReport)
+

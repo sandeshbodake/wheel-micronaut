@@ -1,0 +1,90 @@
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
+plugins {
+    id "application"
+}
+sourceSets.main.kotlin.srcDirs += "gen"
+sourceSets.main.resources.srcDirs += "spec"
+
+group 'sample.service'
+version '0.1'
+
+mainClassName = "scalereal.api.ApiApplication"
+
+configurations {
+    apifi
+}
+
+sourceSets {
+    devOnly {
+        kotlin.srcDirs = ['dev-src']
+        resources.srcDirs = ['dev-res']
+        java.srcDirs = [] // disable java devOnly dirs
+        compileClasspath += sourceSets.main.runtimeClasspath
+    }
+}
+
+dependencies {
+    implementation project(":core")
+    implementation project(":connector:db")
+    implementation project(":connector:graphql")
+
+    compileOnly libs.graalvm.nativeImageSvm
+    devOnly platform(libs.micronaut.bom)
+    devOnly libs.micronaut.httpServerNetty
+
+    implementation platform(libs.micronaut.bom)
+    implementation libs.micronaut.httpClient
+
+    implementation(libs.micronaut.functionAwsApiProxy) {
+        exclude group: "org.slf4j", module: "slf4j-api"
+    }
+    implementation libs.kotlin.reflect
+    implementation libs.micronaut.security.jwt
+    implementation libs.micronaut.runtime
+    implementation libs.jackson.kotlinModule
+    implementation libs.micronaut.reactor
+
+    runtimeOnly libs.logback.classic
+    runtimeOnly libs.jackson.kotlinModule
+
+    testImplementation libs.testcontainer.postgresql
+    testImplementation libs.postgresql.postgresql
+    testImplementation libs.postgresql.jdbc4
+    testImplementation libs.liquibase.core
+    testImplementation libs.jackson.jaxbAnnotations
+    testImplementation project(":core").sourceSets.test.output
+
+    kapt libs.micronaut.openApi
+    implementation libs.swagger.annotations
+
+    kapt platform(libs.micronaut.bom)
+    kapt libs.micronaut.graal
+    kapt libs.micronaut.validation
+    kapt libs.micronaut.security.security
+    kapt libs.micronaut.inject.java
+    kaptDevOnly libs.micronaut.inject.java
+
+    kaptTest platform(libs.micronaut.bom)
+    kaptTest libs.micronaut.inject.java
+
+    // For OSX Only
+    if (DefaultNativePlatform.currentOperatingSystem.isMacOsX()) {
+        devOnly "io.micronaut:micronaut-runtime-osx"
+        devOnly "net.java.dev.jna:jna"
+        devOnly "io.methvin:directory-watcher"
+    }
+}
+
+tasks.withType(JavaExec) {
+    classpath += configurations.devOnly
+    classpath += sourceSets.devOnly.runtimeClasspath
+    jvmArgs('-noverify',
+            '-XX:TieredStopAtLevel=1',
+            '-Dcom.sun.management.jmxremote',
+            "-Dlogback.configurationFile=logback-dev.xml",
+            '-Dmicronaut.environments=dev')
+}
+
+run.dependsOn(":migration:run")
+

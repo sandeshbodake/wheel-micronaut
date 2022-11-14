@@ -1,0 +1,20 @@
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation platform(libs.micronaut.bom)
+
+    implementation libs.slf4j.simple
+    implementation libs.jackson.kotlinModule
+    implementation libs.micronaut.inject.inject
+
+    implementation libs.apache.commonsCsv
+    implementation libs.apache.commonsLang
+    implementation libs.jetbrains.kotlinxHtml.jvm
+
+    kapt platform(libs.micronaut.bom)
+    kapt libs.micronaut.inject.java
+
+    kaptTest libs.micronaut.inject.java
+}

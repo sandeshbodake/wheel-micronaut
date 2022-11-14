@@ -1,0 +1,22 @@
+sourceSets.main.kotlin.srcDirs += "gen"
+
+
+dependencies {
+    implementation project(":core")
+
+    api libs.postgresql.postgresql
+
+    implementation platform(libs.micronaut.bom)
+    implementation libs.micronaut.inject.inject
+    implementation libs.jackson.kotlinModule
+
+    kapt platform(libs.micronaut.bom)
+    kapt libs.micronaut.inject.java
+    kapt libs.micronaut.validation
+    kaptTest platform(libs.micronaut.bom)
+
+    testImplementation libs.testcontainer.postgresql
+    testImplementation libs.postgresql.jdbc4
+    testImplementation libs.liquibase.core
+    testImplementation project(":core").sourceSets.test.output
+}

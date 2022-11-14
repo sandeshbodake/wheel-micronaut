@@ -1,0 +1,34 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation "org.liquibase:liquibase-core:$liquibaseVersion"
+    implementation "org.postgresql:postgresql:$postgresVersion"
+    implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
+    implementation libs.liquibase.core
+    implementation libs.postgresql.postgresql
+    implementation libs.jakartaXml.bindApi
+}
+
+applicationName = "sample-db-migrate"
+
+mainClassName = "liquibase.integration.commandline.Main"
+
+run {
+    args "--driver=org.postgresql.Driver"
+    args "--url=jdbc:postgresql://localhost/sample"
+    args "--username=postgres"
+    args "--password="
+    args "--changeLogFile=changelog.xml"
+    args 'update'
+}
+
+distributions {
+    main {
+        contents {
+            from('changelog')
+        }
+    }
+}
+

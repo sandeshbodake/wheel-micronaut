@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+  <changeSet dbms="postgresql" id="create-users-table" author="gn">
+    <sqlFile path="sql/ddl/01-create-users.sql" encoding="UTF-8"/>
+  </changeSet>
+  <changeSet dbms="postgresql" id="create-refresh-tokens-table" author="gn">
+    <sqlFile path="sql/ddl/02-create-refresh-tokens.sql" encoding="UTF-8"/>
+  </changeSet>
+</databaseChangeLog>

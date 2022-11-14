@@ -1,0 +1,17 @@
+build/
+target/
+.DS_Store
+out/
+.idea/
+.gradle/
+.kotlintest/
+.classpath
+.settings
+.project
+*.iws
+*.iml
+*.ipr
+*.log
+.serverless
+Thumbs.db
+*/bin

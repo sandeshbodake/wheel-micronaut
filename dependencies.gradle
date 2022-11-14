@@ -1,0 +1,195 @@
+ext {
+    // JetBrains
+    kotlinVersion = "1.7.0"
+    kotlinxHtmlVersion = "0.7.3"
+    ktlintVersion = "10.1.0"
+
+    // Micronaut
+    micronautVersion = "3.6.0"
+    micronautOpenApiVersion = "2.5.0"
+    micronautGraphqlVersion = "3.1.0"
+
+    // Rx
+    rxjava2Version = "2.2.21"
+
+    // reactor
+    reactorCoreVerion = "3.4.12"
+
+    // JavaX
+    javaxMailVersion = "1.6.2"
+    javaxInjectVersion = "1"
+
+    // PostgreSQL
+    postgresVersion = "42.2.8"
+
+    // Migrations
+    liquibaseVersion = "4.4.0"
+    jakartaXmlVersion = "2.3.2"
+
+    // Swagger
+    swaggerVersion = "2.1.9"
+
+    // Jackson
+    jacksonVersion = "2.12.5"
+
+    // Logging
+    slf4jVersion = "1.7.26"
+    logbackVersion = "1.2.3"
+
+    // Apache
+    apacheCommonCsvVersion = "1.8"
+    apacheCommonLangVersion = "3.12.0"
+
+    // JaCoCo
+    jaCoCoVersion = "0.8.7"
+
+    // ShadowJar
+    johnrengelmanShadowVersion = "7.0.0"
+
+    // Sonarqube
+    sonarqubeVersion = "2.8"
+
+    // JP Classmethod AWS Lambda
+    jpClassMethodAwsLambdaVersion = "0.39"
+
+    // Testing
+    micronautKotestVersion = "3.2.0"
+    kotestVersion = "4.6.2"
+    javaFakerVersion = "1.0.2"
+    mockkVersion = "1.12.0"
+    testContainerVersion = "1.16.0"
+
+    //logging
+    logstashLogback ="7.0.1"
+
+    // Exposed
+    exposedVersion="0.39.1"
+
+    // Server netty version
+    serverNettyVersion="1.1.0"
+}
+
+ext.libs = [:]
+
+def libs = [:]
+
+libs.kotlin = [
+        stdlib : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion",
+        reflect: "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
+]
+
+libs.micronaut = [
+        bom                : "io.micronaut:micronaut-bom:$micronautVersion",
+        runtime            : "io.micronaut:micronaut-runtime",
+        inject             : [
+                inject: "io.micronaut:micronaut-inject",
+                java  : "io.micronaut:micronaut-inject-java"
+        ],
+        httpServerNetty    : "io.micronaut:micronaut-http-server-netty",
+        httpClient         : "io.micronaut:micronaut-http-client",
+        functionAwsApiProxy: "io.micronaut.aws:micronaut-function-aws-api-proxy",
+        security           : [
+                security: "io.micronaut.security:micronaut-security",
+                jwt     : "io.micronaut.security:micronaut-security-jwt"
+        ],
+        openApi            : "io.micronaut.openapi:micronaut-openapi:$micronautOpenApiVersion",
+        graal              : "io.micronaut:micronaut-graal",
+        validation         : "io.micronaut:micronaut-validation",
+        jdbcHikari         : "io.micronaut.sql:micronaut-jdbc-hikari",
+        reactor            : "io.micronaut.reactor:micronaut-reactor",
+        serverNetty        : "io.micronaut:micronaut-http-server-netty:$serverNettyVersion",
+        graphql            : "io.micronaut.graphql:micronaut-graphql:$micronautGraphqlVersion"
+]
+
+libs.graalvm = [
+        nativeImageSvm: "org.graalvm.nativeimage:svm"
+]
+
+libs.sun = [
+        javaxMail: "com.sun.mail:javax.mail:$javaxMailVersion"
+]
+
+libs.javax = [
+        annotationApi: "javax.annotation:javax.annotation-api",
+        inject: "javax.inject:javax.inject:$javaxInjectVersion"
+]
+
+libs.reactiveX = [
+        rxjava2: "io.reactivex.rxjava2:rxjava:$rxjava2Version",
+        rxjava3: "io.micronaut.rxjava3:micronaut-rxjava3"
+]
+
+libs.swagger = [
+        annotations: "io.swagger.core.v3:swagger-annotations:$swaggerVersion"
+]
+
+
+libs.jakartaXml = [
+        bindApi: "jakarta.xml.bind:jakarta.xml.bind-api:$jakartaXmlVersion"
+]
+
+libs.logback = [
+        classic: "ch.qos.logback:logback-classic:$logbackVersion"
+]
+
+libs.slf4j = [
+        simple: "org.slf4j:slf4j-simple:$slf4jVersion",
+        api   : "org.slf4j:slf4j-api:$slf4jVersion",
+]
+
+libs.apache = [
+        commonsCsv : "org.apache.commons:commons-csv:$apacheCommonCsvVersion",
+        commonsLang: "org.apache.commons:commons-lang3:$apacheCommonLangVersion"
+]
+
+libs.jackson = [
+        kotlinModule   : "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion",
+        jaxbAnnotations: "com.fasterxml.jackson.module:jackson-module-jaxb-annotations",
+        dataformat     : "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:$jacksonVersion",
+        datatypeJSR310 : "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion",
+]
+
+libs.postgresql = [
+        postgresql: "org.postgresql:postgresql:$postgresVersion",
+        jdbc4     : "postgresql:postgresql:9.1-901-1.jdbc4"
+]
+
+libs.liquibase = [
+        core: "org.liquibase:liquibase-core:$liquibaseVersion"
+]
+
+libs.testcontainer = [
+        postgresql: "org.testcontainers:postgresql:$testContainerVersion"
+]
+
+libs.jetbrains = [
+        kotlinxHtml: [
+                jvm: "org.jetbrains.kotlinx:kotlinx-html-jvm:$kotlinxHtmlVersion"
+        ]
+]
+
+libs.testing = [
+        javaFaker: "com.github.javafaker:javafaker:$javaFakerVersion",
+        kotest   : [
+                runnerJUnit5: "io.kotest:kotest-runner-junit5-jvm:$kotestVersion",
+                assertions  : "io.kotest:kotest-assertions-core:$kotestVersion",
+                micronaut   : "io.micronaut.test:micronaut-test-kotest:$micronautKotestVersion"
+        ],
+        mockk    : "io.mockk:mockk:$mockkVersion"
+]
+
+libs.ktlint = [
+        gradle: "org.jlleitschuh.gradle:ktlint-gradle:$ktlintVersion"
+]
+
+libs.logstash = [
+        encoder: "net.logstash.logback:logstash-logback-encoder:$logstashLogback"
+]
+
+libs.exposed = [
+        core: "org.jetbrains.exposed:exposed-core:$exposedVersion",
+        dao: "org.jetbrains.exposed:exposed-dao:$exposedVersion",
+        jdbc: "org.jetbrains.exposed:exposed-jdbc:$exposedVersion"
+]
+
+ext.libs = libs
