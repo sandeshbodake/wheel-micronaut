@@ -1,11 +1,11 @@
 ext {
     // JetBrains
-    kotlinVersion = "1.7.0"
+    kotlinVersion = "1.7.21"
     kotlinxHtmlVersion = "0.7.3"
     ktlintVersion = "10.1.0"
 
     // Micronaut
-    micronautVersion = "3.6.0"
+    micronautVersion = "3.7.3"
     micronautOpenApiVersion = "2.5.0"
     micronautGraphqlVersion = "3.1.0"
 
